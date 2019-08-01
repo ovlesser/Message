@@ -54,23 +54,23 @@ public class MessageDaoTest {
     }
 
     @Test
-    public void getTrafficWhenNoTrafficInserted() throws InterruptedException {
-        List<Message> traffic = LiveDataTestUtil.getValue(messageDao.loadAllMessage("1111"));
+    public void getMessageWhenNoMessageInserted() throws InterruptedException {
+        List<Message> messages = LiveDataTestUtil.getValue(messageDao.loadAllMessage("1111"));
 
-        assertTrue(traffic.isEmpty());
+        assertTrue(messages.isEmpty());
     }
 
     @Test
-    public void getTrafficAfterInserted() throws InterruptedException {
+    public void getMessageAfterInserted() throws InterruptedException {
         messageDao.insertAll(MESSAGES);
 
-        List<Message> traffic = LiveDataTestUtil.getValue(messageDao.loadAllMessage("1111"));
+        List<Message> messages = LiveDataTestUtil.getValue(messageDao.loadAllMessage("1111"));
 
-        assertThat(traffic.size(), is(MESSAGES.size()));
+        assertThat(messages.size(), is(MESSAGES.size()));
     }
 
     @Test
-    public void getTrafficById() throws InterruptedException {
+    public void getMessageById() throws InterruptedException {
         messageDao.insertAll(MESSAGES);
 
         List<Message> messages = LiveDataTestUtil.getValue(messageDao.loadAllMessage

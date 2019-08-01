@@ -4,8 +4,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.annotation.Nullable
-import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -22,17 +20,25 @@ class MessageAdapter (
     : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
     lateinit var dataBinding: ListItemBinding
     private var messages: MutableList<Message> = arrayListOf()
+    lateinit var recyclerView: RecyclerView
 
     init {
         viewModel.repository.observable.observe(context,
             Observer<List<Message>> { messages ->
-                if (messages == null) {
+                if (messages == null || messages.isEmpty()) {
                     this@MessageAdapter.messages.clear()
-                } else {
-                    this@MessageAdapter.messages.addAll(messages)
                     notifyDataSetChanged()
+                } else {
+                    this@MessageAdapter.messages = messages as MutableList<Message>
+                    notifyDataSetChanged()
+                    recyclerView.smoothScrollToPosition(this@MessageAdapter.messages.size-1)
                 }
             })
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        this.recyclerView = recyclerView
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {

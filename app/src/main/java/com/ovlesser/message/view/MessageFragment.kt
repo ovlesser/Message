@@ -6,17 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
-import com.ovlesser.message.DataRepository
 import com.ovlesser.message.MainActivity
 import com.ovlesser.message.R
 import com.ovlesser.message.databinding.FragmentMessageBinding
 import com.ovlesser.message.model.Contact
-import com.ovlesser.message.model.Message
 import com.ovlesser.message.viewModel.ContactViewModel
 import com.ovlesser.message.viewModel.MessageViewModel
 import kotlinx.android.synthetic.main.fragment_message.*
-import javax.inject.Inject
 
 class MessageFragment : Fragment() {
     private lateinit var messageViewModel : MessageViewModel
@@ -39,10 +35,15 @@ class MessageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         list?.run {
             adapter = MessageAdapter(this@MessageFragment, messageViewModel)
+            dataBinding.contactViewModel = contactViewModel
+            dataBinding.messageViewModel = messageViewModel
         }
-        dataBinding.contactViewModel = contactViewModel
-        dataBinding.messageViewModel = messageViewModel
-
+        bt_send?.run {
+            setOnClickListener {
+                messageViewModel.add(dataBinding.inputText!!, true, contactViewModel.contact.number)
+                dataBinding.inputText = ""
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater,
