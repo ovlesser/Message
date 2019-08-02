@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:card_view="http://schemas.android.com/apk/res-auto">
   <data>
     <import type="android.view.Gravity"/>
     <variable
         name="message"
         type="com.ovlesser.message.model.Message" />
   </data>
-  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      android:orientation="vertical"
+  <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
+      android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-        android:id="@+id/text"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@{message.text}"
-        android:gravity="@{message.send ? Gravity.RIGHT : Gravity.LEFT}"/>
-  </LinearLayout></layout>
+        card_view:cardBackgroundColor="@android:color/darker_gray"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="0dp"
+        android:padding="8dp"
+        android:layout_margin="8dp">
+
+      <TextView
+          android:id="@+id/text"
+          android:textSize="24dp"
+          android:textColor="@android:color/black"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@{message.text}"/>
+    </androidx.cardview.widget.CardView>
+  </FrameLayout>
+</layout>

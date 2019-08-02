@@ -1,56 +1,59 @@
 package com.ovlesser.message
 
+import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.ovlesser.message.db.AppDatabase
 import com.ovlesser.message.model.Message
 import java.util.*
-import javax.inject.Inject
 
 /**
  * Repository handling the work with message.
  */
-class DataRepository @Inject
-constructor(private val mDatabase: AppDatabase) {
-    private val mObservableMessage: MediatorLiveData<List<Message>> = MediatorLiveData()
-
-    /**
-     * Get the list of traffic from the database and get notified when the data changes.
-     */
-    val message: LiveData<List<Message>>
-        get() = mObservableMessage
-
-    init {
-    }
+class DataRepository(private val database: AppDatabase) {
+    var messages : MutableList<Message> = arrayListOf()
+    var observable: MediatorLiveData<List<Message>> = MediatorLiveData()
 
     fun loadMessage(messageId: Int): LiveData<Message> {
-        return mDatabase.messageDao().loadMessage(messageId)
+        return database.messageDao().loadMessage(messageId)
     }
 
     fun loadAllMessage( number: String) {
-        mObservableMessage.addSource(mDatabase.messageDao().loadAllMessage( number)
-        ) { messages ->
-            if (mDatabase.databaseCreated.value != null) {
-                mObservableMessage.postValue(messages)
+        observable.addSource(database.messageDao().loadAllMessage(number)
+        ) {
+            if (database.databaseCreated.value != null) {
+                messages.addAll(it)
+                observable.postValue(null)
+                observable.postValue(it)
             }
         }
     }
 
+    fun saveAllMessage() {
+        database.insertData(messages)
+    }
+
     fun addMessage( message: Message) {
-        mDatabase.messageDao().insert(message)
+        messages.add(message)
+        observable.postValue(arrayListOf(message))
+
+        Handler().postDelayed({
+            val response = Message("re: ${message.text}", send = false, id = 0)
+            observable.postValue(arrayListOf(response))
+        }, 500)
     }
 
     companion object {
 
-        private lateinit var sInstance: DataRepository
+        private lateinit var instance: DataRepository
 
         fun getInstance(database: AppDatabase): DataRepository {
-            if (!::sInstance.isInitialized) {
+            if (!::instance.isInitialized) {
                 synchronized(DataRepository::class.java) {
-                    sInstance = DataRepository(database)
+                    instance = DataRepository(database)
                 }
             }
-            return sInstance
+            return instance
         }
     }
 }

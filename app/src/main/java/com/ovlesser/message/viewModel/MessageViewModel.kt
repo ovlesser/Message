@@ -4,18 +4,18 @@ import androidx.lifecycle.ViewModel
 import com.ovlesser.message.DataRepository
 import com.ovlesser.message.model.Message
 import java.util.*
-import javax.inject.Inject
 
-class MessageViewModel( val messages : MutableList<Message>) : ViewModel() {
-    @Inject
-    lateinit var repository: DataRepository
+class MessageViewModel( val repository: DataRepository) : ViewModel() {
 
     fun add(message: Message): Unit {
-        messages.add(message)
         repository.addMessage(message)
     }
 
     fun add(text: String, send: Boolean, number: String): Unit {
-        add(Message(text, send, Date(), number))
+        add(Message(text, send, Date(), number, 0))
+    }
+
+    fun update( number: String) {
+        repository.loadAllMessage(number)
     }
 }
