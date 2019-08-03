@@ -1,15 +1,12 @@
 package com.ovlesser.message.db
 
 import android.content.Context
-import androidx.annotation.NonNull
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.ovlesser.message.AppExecutors
 import com.ovlesser.message.model.Message
 import com.ovlesser.message.utils.DateConverter

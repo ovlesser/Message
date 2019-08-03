@@ -1,6 +1,5 @@
 package com.ovlesser.message.di
 
-import android.app.Application
 import com.ovlesser.message.DataRepository
 import com.ovlesser.message.db.AppDatabase
 import dagger.Module
