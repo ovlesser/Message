@@ -8,8 +8,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.ovlesser.message.DataRepository
+import com.ovlesser.message.MainActivity
 import com.ovlesser.message.R
 import com.ovlesser.message.databinding.FragmentMessageBinding
+import com.ovlesser.message.model.Contact
 import com.ovlesser.message.model.Message
 import com.ovlesser.message.viewModel.ContactViewModel
 import com.ovlesser.message.viewModel.MessageViewModel
@@ -17,9 +19,7 @@ import kotlinx.android.synthetic.main.fragment_message.*
 import javax.inject.Inject
 
 class MessageFragment : Fragment() {
-    @Inject
-    lateinit var dataRepository : DataRepository
-    lateinit var messageViewModel : MessageViewModel
+    private lateinit var messageViewModel : MessageViewModel
     private lateinit var contactViewModel: ContactViewModel
     lateinit var dataBinding: FragmentMessageBinding
 
@@ -29,16 +29,16 @@ class MessageFragment : Fragment() {
 //        messageViewModel = activity?.run {
 //            ViewModelProviders.of(this).get(MessageViewModel::class.java)
 //        } ?: throw Exception("Invalid Activity")
-        messageViewModel = MessageViewModel(dataRepository.message.value as MutableList<Message>)
-        contactViewModel = activity?.run {
-            ViewModelProviders.of(this).get(ContactViewModel::class.java)
-        } ?: throw Exception("Invalid Activity")
+        (activity as MainActivity).run {
+            messageViewModel = MessageViewModel(dataRepository)
+            contactViewModel = ContactViewModel(Contact())
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         list?.run {
-            adapter = MessageAdapter(messageViewModel)
+            adapter = MessageAdapter(this@MessageFragment, messageViewModel)
         }
         dataBinding.contactViewModel = contactViewModel
         dataBinding.messageViewModel = messageViewModel

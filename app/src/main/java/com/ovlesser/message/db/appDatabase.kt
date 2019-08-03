@@ -18,41 +18,13 @@ import com.ovlesser.message.utils.DateConverter
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase() : RoomDatabase() {
 
-    var mExecutors: AppExecutors? = null
-    private val mIsDatabaseCreated = MutableLiveData<Boolean>()
+    var executors: AppExecutors? = null
+    private val isDatabaseCreated = MutableLiveData<Boolean>()
 
     val databaseCreated: LiveData<Boolean>
-        get() = mIsDatabaseCreated
+        get() = isDatabaseCreated
 
     abstract fun messageDao(): MessageDao
-
-//    fun getInstance(context: Context, executors: AppExecutors): AppDatabase {
-//        if (sInstance == null) {
-//            synchronized(AppDatabase::class.java) {
-//                if (sInstance == null) {
-//                    sInstance = buildDatabase(context.applicationContext, executors)
-//                    sInstance.mExecutors = executors
-//                    sInstance.updateDatabaseCreated(context.applicationContext)
-//                }
-//            }
-//        } else {
-//            sInstance.setDatabaseCreated()
-//        }
-//        return sInstance
-//    }
-//
-//    private fun buildDatabase(
-//        appContext: Context,
-//        executors: AppExecutors
-//    ): AppDatabase {
-//        return Room.databaseBuilder(appContext, AppDatabase::class.java, DATABASE_NAME)
-//            .addCallback(object : RoomDatabase.Callback() {
-//                override fun onCreate(@NonNull db: SupportSQLiteDatabase) {
-//                    super.onCreate(db)
-//                    sInstance.updateDatabaseCreated(appContext.applicationContext)
-//                }
-//            }).build()
-//    }
 
     fun updateDatabaseCreated(context: Context) {
         if (context.getDatabasePath(DATABASE_NAME).exists()) {
@@ -61,18 +33,53 @@ abstract class AppDatabase() : RoomDatabase() {
     }
 
     fun setDatabaseCreated() {
-        mIsDatabaseCreated.postValue(true)
+        isDatabaseCreated.postValue(true)
     }
 
     fun insertData(messages: List<Message>) {
-        mExecutors!!.diskIO().execute({ runInTransaction { messageDao().insertAll(messages) } })
+        executors!!.diskIO().execute {
+            runInTransaction {
+                messageDao().insertAll(messages)
+            }
+        }
     }
 
     companion object {
 
-        private lateinit var sInstance: AppDatabase
+        private lateinit var instance: AppDatabase
 
         @VisibleForTesting
         val DATABASE_NAME = "message-db"
+
+        fun getInstance(context: Context, executors: AppExecutors): AppDatabase {
+            if (!::instance.isInitialized) {
+                synchronized(AppDatabase::class.java) {
+                    if (!::instance.isInitialized) {
+                        instance = buildDatabase(context.applicationContext, executors)
+                        instance.executors = executors
+                        instance.updateDatabaseCreated(context.applicationContext)
+                    }
+                }
+            } else {
+                instance.setDatabaseCreated()
+            }
+            return instance
+        }
+
+        private fun buildDatabase( context: Context, executors: AppExecutors
+        ): AppDatabase {
+            return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+                .addCallback(object : RoomDatabase.Callback() {
+                    override fun onCreate(@NonNull db: SupportSQLiteDatabase) {
+                        super.onCreate(db)
+                        instance.updateDatabaseCreated(context.applicationContext)
+                    }
+
+                    override fun onOpen(db: SupportSQLiteDatabase) {
+                        super.onOpen(db)
+                    }
+                }).build()
+        }
+
     }
 }

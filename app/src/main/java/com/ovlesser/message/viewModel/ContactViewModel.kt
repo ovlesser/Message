@@ -8,9 +8,4 @@ import com.ovlesser.message.model.Contact
 import javax.inject.Inject
 
 class ContactViewModel(val contact: Contact) : ViewModel() {
-    @Inject
-    lateinit var repository : DataRepository
-    fun update() {
-        repository.loadAllMessage(contact.number)
-    }
 }
