@@ -20,18 +20,19 @@ class DataRepository @Inject constructor(private val database: AppDatabase) {
     }
 
     fun loadAllMessage( number: String) {
-        observable.addSource(database.messageDao().loadAllMessage(number)
-        ) {
+        val liveData = database.messageDao().loadAllMessage(number)
+        observable.addSource(liveData) {
             if (database.databaseCreated.value != null) {
-                messages.clear()
-                messages.addAll(it)
+                messages = it as MutableList<Message>
                 observable.postValue(it)
+                observable.removeSource(liveData)
             }
         }
     }
 
     fun saveAllMessage() {
-        database.insertData(messages)
+        val messages2 = messages.toList()
+        database.insertData(messages2)
     }
 
     fun addMessage( message: Message) {

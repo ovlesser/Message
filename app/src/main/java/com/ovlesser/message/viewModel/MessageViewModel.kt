@@ -16,6 +16,7 @@ class MessageViewModel( val repository: DataRepository) : ViewModel() {
     }
 
     fun update( number: String) {
+        repository.saveAllMessage()
         repository.loadAllMessage(number)
     }
 }
