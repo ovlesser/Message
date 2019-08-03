@@ -5,12 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.ovlesser.message.db.AppDatabase
 import com.ovlesser.message.model.Message
-import java.util.*
+import javax.inject.Inject
 
 /**
  * Repository handling the work with message.
  */
-class DataRepository(private val database: AppDatabase) {
+class DataRepository @Inject constructor(private val database: AppDatabase) {
+
     var messages : MutableList<Message> = arrayListOf()
     var observable: MediatorLiveData<List<Message>> = MediatorLiveData()
 
@@ -22,8 +23,8 @@ class DataRepository(private val database: AppDatabase) {
         observable.addSource(database.messageDao().loadAllMessage(number)
         ) {
             if (database.databaseCreated.value != null) {
+                messages.clear()
                 messages.addAll(it)
-                observable.postValue(null)
                 observable.postValue(it)
             }
         }
@@ -35,14 +36,28 @@ class DataRepository(private val database: AppDatabase) {
 
     fun addMessage( message: Message) {
         messages.add(message)
-        observable.postValue(arrayListOf(message))
+        observable.postValue(messages)
 
-        Handler().postDelayed({
-            val response = Message("re: ${message.text}", send = false, id = 0)
-            observable.postValue(arrayListOf(response))
-        }, 500)
+        getResponse(message)
     }
 
+    private fun getResponse(message: Message) {
+        val responses = listOf(
+            Message("random response 1", send = false, number = message.number, id = 0),
+            Message("random response 2", send = false, number = message.number, id = 0),
+            Message("random response 3", send = false, number = message.number, id = 0),
+            Message("random response 4", send = false, number = message.number, id = 0),
+            Message("random response 5", send = false, number = message.number, id = 0),
+            Message("random response 6", send = false, number = message.number, id = 0),
+            Message("random response 7", send = false, number = message.number, id = 0)
+        )
+
+        Handler().postDelayed({
+            val response = responses.random()
+            messages.add(response)
+            observable.postValue(messages)
+        }, 500)
+    }
     companion object {
 
         private lateinit var instance: DataRepository

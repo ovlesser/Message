@@ -51,35 +51,35 @@ abstract class AppDatabase() : RoomDatabase() {
         @VisibleForTesting
         val DATABASE_NAME = "message-db"
 
-        fun getInstance(context: Context, executors: AppExecutors): AppDatabase {
-            if (!::instance.isInitialized) {
-                synchronized(AppDatabase::class.java) {
-                    if (!::instance.isInitialized) {
-                        instance = buildDatabase(context.applicationContext, executors)
-                        instance.executors = executors
-                        instance.updateDatabaseCreated(context.applicationContext)
-                    }
-                }
-            } else {
-                instance.setDatabaseCreated()
-            }
-            return instance
-        }
-
-        private fun buildDatabase( context: Context, executors: AppExecutors
-        ): AppDatabase {
-            return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-                .addCallback(object : RoomDatabase.Callback() {
-                    override fun onCreate(@NonNull db: SupportSQLiteDatabase) {
-                        super.onCreate(db)
-                        instance.updateDatabaseCreated(context.applicationContext)
-                    }
-
-                    override fun onOpen(db: SupportSQLiteDatabase) {
-                        super.onOpen(db)
-                    }
-                }).build()
-        }
+//        fun getInstance(context: Context, executors: AppExecutors): AppDatabase {
+//            if (!::instance.isInitialized) {
+//                synchronized(AppDatabase::class.java) {
+//                    if (!::instance.isInitialized) {
+//                        instance = buildDatabase(context.applicationContext, executors)
+//                        instance.executors = executors
+//                        instance.updateDatabaseCreated(context.applicationContext)
+//                    }
+//                }
+//            } else {
+//                instance.setDatabaseCreated()
+//            }
+//            return instance
+//        }
+//
+//        private fun buildDatabase( context: Context, executors: AppExecutors
+//        ): AppDatabase {
+//            return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+//                .addCallback(object : RoomDatabase.Callback() {
+//                    override fun onCreate(@NonNull db: SupportSQLiteDatabase) {
+//                        super.onCreate(db)
+//                        instance.updateDatabaseCreated(context.applicationContext)
+//                    }
+//
+//                    override fun onOpen(db: SupportSQLiteDatabase) {
+//                        super.onOpen(db)
+//                    }
+//                }).build()
+//        }
 
     }
 }

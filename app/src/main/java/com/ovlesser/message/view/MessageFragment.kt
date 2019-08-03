@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.RecyclerView
 import com.ovlesser.message.DataRepository
 import com.ovlesser.message.MainActivity
 import com.ovlesser.message.R
@@ -39,10 +40,15 @@ class MessageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         list?.run {
             adapter = MessageAdapter(this@MessageFragment, messageViewModel)
+            dataBinding.contactViewModel = contactViewModel
+            dataBinding.messageViewModel = messageViewModel
         }
-        dataBinding.contactViewModel = contactViewModel
-        dataBinding.messageViewModel = messageViewModel
-
+        bt_send?.run {
+            setOnClickListener {
+                messageViewModel.add(dataBinding.inputText!!, true, contactViewModel.contact.number)
+                dataBinding.inputText = ""
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater,

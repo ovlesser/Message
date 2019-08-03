@@ -10,18 +10,14 @@ import com.ovlesser.message.viewModel.MessageViewModel
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-    lateinit var appExecutors: AppExecutors
-    lateinit var database: AppDatabase
+    @Inject
     lateinit var dataRepository: DataRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        appExecutors = AppExecutors()
-        database = AppDatabase.getInstance(this, appExecutors)
-        dataRepository = DataRepository(database)
-
+        (application as MainApplication).component.inject(this)
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_content, MessageFragment())
             .disallowAddToBackStack()

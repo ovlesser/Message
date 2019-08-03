@@ -12,15 +12,15 @@ interface MessageDao {
     @Query("SELECT * FROM message order by time desc")
     fun loadAllMessage(): LiveData<List<Message>>
 
-    @Query("SELECT * FROM message WHERE number = :number order by time asc")
+    @Query("SELECT * FROM message WHERE number = :number order by id asc")
     fun loadAllMessage(number: String): LiveData<List<Message>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(messages: List<Message>)
 
-    @Query("select * from message where id = :messageId order by time asc")
+    @Query("select * from message where id = :messageId order by id asc")
     fun loadMessage(messageId: Int): LiveData<Message>
 
-    @Query("select * from message where id = :messageId order by time asc")
+    @Query("select * from message where id = :messageId order by id asc")
     fun loadMessageSync(messageId: Int): Message
 }

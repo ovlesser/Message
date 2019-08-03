@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.text.TextUtils"/>
@@ -10,88 +11,108 @@
             name="messageViewModel"
             type="com.ovlesser.message.viewModel.MessageViewModel" />
         <variable
-            name="text"
+            name="inputText"
             type="String" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.cardview.widget.CardView
             android:id="@+id/contact"
             android:layout_width="match_parent"
             android:layout_margin="16dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/list"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:textAlignment="center"
-                android:text="To: "
-                android:layout_weight="0"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="@{!TextUtils.isEmpty(contactViewModel.contact.number)}"
-                android:hint="phone number"
-                android:inputType="numberDecimal"
-                android:layout_weight="1"
-                android:text="@={contactViewModel.contact.number}"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:textAlignment="center"
+                    android:text="To: "
+                    android:layout_weight="0"/>
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_gravity="end"
-                android:textAlignment="center"
-                android:layout_weight="0"
-                android:background="@android:drawable/ic_input_add"
-                android:text="ok"
-                android:onClick="@{() -> messageViewModel.update(contactViewModel.contact.number)}"/>
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:enabled="@{!TextUtils.isEmpty(contactViewModel.contact.number)}"
+                    android:hint="phone number"
+                    android:inputType="numberDecimal"
+                    android:layout_weight="1"
+                    android:text="@={contactViewModel.contact.number}"/>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_gravity="end"
+                    android:textAlignment="center"
+                    android:layout_weight="0"
+                    android:background="@android:drawable/ic_input_add"
+                    android:text="ok"
+                    android:onClick="@{() -> messageViewModel.update(contactViewModel.contact.number)}"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/contact"
+            android:layout_marginStart="16dp"
             app:layoutManager="LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@+id/input"
+            app:layout_constraintTop_toBottomOf="@+id/contact"
             tools:listitem="@layout/list_item" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.cardview.widget.CardView
             android:id="@+id/input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/list"
             app:layout_constraintBottom_toBottomOf="parent">
 
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
             <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@={text}"/>
+                android:text="@={inputText}"/>
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
                 android:gravity="center"
                 android:layout_weight="0"
-                android:text="Send"
-                android:enabled="@{!TextUtils.isEmpty(text)}"
-                android:onClick="@{() -> messageViewModel.add(text, true, contactViewModel.contact.number)}"/>
+                android:enabled="@{!TextUtils.isEmpty(inputText)}"
+                android:text="Send"/>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.cardview.widget.CardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
